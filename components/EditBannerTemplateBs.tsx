@@ -1,6 +1,6 @@
 import { RxCross2 } from "react-icons/rx";
 import BannerImageComp from "./BannerImageComp";
-import { useState } from "react";
+import { useState,useRef } from "react";
 import Image from "next/image";
 
 interface BannerImageCompProps {
@@ -31,9 +31,23 @@ const EditBannerTemplateBs = ({
   const [description, setDescription] = useState(bannerdata.Description);
   const [buttonText, setButtonText] = useState(bannerdata.cta);
   const [imagesrc, setImagesrc] = useState(bannerdata.Image);
-
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagesrc(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
   const handleEditBanner = () => {
-    console.log(bannerdata.id, title, description, buttonText);
+  
+
+    console.log(bannerdata.id, title, description, buttonText, imagesrc);
     handleUpdate(bannerdata.id, title, description, buttonText, imagesrc);
     handleClose();
   };
@@ -50,7 +64,6 @@ const EditBannerTemplateBs = ({
       <div className="ml-24">
         <BannerImageComp
           key={bannerdata.id}
-          // {...bannerdata}
           id={bannerdata.id}
           title={title}
           Description={description}
@@ -61,16 +74,13 @@ const EditBannerTemplateBs = ({
           forEdit={false}
         />
       </div>
-      <div
-        className="mt-80 mx-10 overflow-y-auto flex flex-col gap-4
-      "
-      >
+      <div className="mt-80 mx-10 overflow-y-auto flex flex-col gap-4">
         <div className="flex items-center gap-4">
           <Image
             src={"/sample1.jpg"}
             height={60}
             width={60}
-            alt="smaple Images"
+            alt="sample Images"
             className="border-4 border-gray-400 rounded-full h-16 w-16 cursor-pointer"
             onClick={() => setImagesrc("/sample1.jpg")}
           />
@@ -78,7 +88,7 @@ const EditBannerTemplateBs = ({
             src={"/sample2.jpg"}
             height={60}
             width={60}
-            alt="smaple Images"
+            alt="sample Images"
             className="border-4 border-gray-400 rounded-full h-16 w-16 cursor-pointer"
             onClick={() => setImagesrc("/sample2.jpg")}
           />
@@ -86,35 +96,48 @@ const EditBannerTemplateBs = ({
             src={"/sample3.jpg"}
             height={60}
             width={60}
-            alt="smaple Images"
-            className="border-4 border-gray-400 rounded-full h-16 w-16 cursor-pointer "
+            alt="sample Images"
+            className="border-4 border-gray-400 rounded-full h-16 w-16 cursor-pointer"
             onClick={() => setImagesrc("/sample3.jpg")}
           />
           <Image
             src={"/sample4.jpg"}
             height={60}
             width={60}
-            alt="smaple Images"
-            className="border-4 border-gray-400 rounded-full h-16 w-16 cursor-pointer "
+            alt="sample Images"
+            className="border-4 border-gray-400 rounded-full h-16 w-16 cursor-pointer"
             onClick={() => setImagesrc("/sample4.jpg")}
           />
           <Image
             src={"/sample5.jpg"}
             height={60}
             width={60}
-            alt="smaple Images"
-            className="border-4 border-gray-400 rounded-full h-16 w-16 cursor-pointer "
+            alt="sample Images"
+            className="border-4 border-gray-400 rounded-full h-16 w-16 cursor-pointer"
             onClick={() => setImagesrc("/sample5.jpg")}
           />
           <Image
             src={"/sample6.jpg"}
             height={60}
             width={60}
-            alt="smaple Images"
-            className="border-4 border-gray-400 rounded-full h-16 w-16 cursor-pointer "
+            alt="sample Images"
+            className="border-4 border-gray-400 rounded-full h-16 w-16 cursor-pointer"
             onClick={() => setImagesrc("/sample6.jpg")}
           />
         </div>
+        <button
+          onClick={() => fileInputRef.current?.click()}
+          className="bg-pink-500 text-white p-3 rounded-lg font-semibold mb-4 "
+        >
+          Upload Image
+        </button>
+        <input
+          type="file"
+          accept="image/*"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          className="hidden"
+        />
         <div className="flex flex-col gap-1">
           <p className="text-[14px] font-semibold text-gray-600">Title</p>
           <input
@@ -133,7 +156,6 @@ const EditBannerTemplateBs = ({
             className="border border-gray-400 p-2 rounded-lg"
           />
         </div>
-
         <div className="flex flex-col gap-1">
           <p className="text-[14px] font-semibold text-gray-600">Button Text</p>
           <input
